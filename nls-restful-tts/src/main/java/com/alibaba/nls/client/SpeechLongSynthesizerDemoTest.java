@@ -138,9 +138,9 @@ public class SpeechLongSynthesizerDemoTest {
         client.shutdown();
     }
     public static void main(String[] args) throws Exception {
-        String appKey = "ZosndNxIufNjR25s";
-        String id = "LTAI5tAS7piKbU37QR7Px4Xw";
-        String secret = "kMexSFfbT8GCekqHk990KGRo6f7dov";
+        String appKey = "";
+        String id = "";
+        String secret = "";
 
 
 //        String ttsTextLong = "百草堂与三味书屋 鲁迅 \n" +

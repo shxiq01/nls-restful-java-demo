@@ -111,9 +111,9 @@ public class SrtFormatXml {
     }
 
     public static Integer getCurTime(String text){
-        String appKey = "ZosndNxIufNjR25s";
-        String id = "LTAI5tAS7piKbU37QR7Px4Xw";
-        String secret = "kMexSFfbT8GCekqHk990KGRo6f7dov";
+        String appKey = "";
+        String id = "";
+        String secret = "";
 
         String musicOutFile = "/Users/shixiaoqi/Downloads/999.mp3";
         int[] times = new int[]{0,0};
