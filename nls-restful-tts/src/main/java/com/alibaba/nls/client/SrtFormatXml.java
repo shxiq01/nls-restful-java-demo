@@ -1,10 +1,13 @@
 package com.alibaba.nls.client;
 
+import com.alibaba.nls.client.protocol.NlsClient;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SrtFormatXml {
+    public static SpeechSynthesizerDemoTest speechSynthesizerDemoTest;
 
 
     /**
@@ -69,10 +72,16 @@ public class SrtFormatXml {
                     lastTime = endTimeMs;
                     totalTime = endTimeMs - startTimeMs;
                 } else {
-                    Integer textLength = text.length();
-                    Integer curTime = (int) Math.round((textLength/500.0)*60*1000);
+//                    Integer textLength = text.length();
+//                    Integer curTime = (int) Math.round((textLength/500.0)*60*1000);
 
-                    System.out.println("textLength"+textLength+"curTime:"+curTime+" totalTime:"+totalTime);
+                    StringBuilder xml1 = new StringBuilder();
+                    xml1.append("<speak>");
+                    xml1.append(text);
+                    xml1.append("</speak>");
+                    Integer curTime = getCurTime(xml1.toString());
+
+
                     if(curTime > totalTime) {
                         double rate1 = (double)curTime/totalTime;
                         double x = 1 - (double)1 / rate1;
@@ -86,6 +95,7 @@ public class SrtFormatXml {
                     if(breakTime > 0) {
                         xmlStringBuilder.append("<break time=\"" + breakTime + "ms\"/>");
                     }
+                    System.out.println("text===>:"+text+"===>rate===>"+rate);
 
                     xmlStringBuilder.append( text);
                     xmlStringBuilder.append("</speak>");
@@ -97,6 +107,31 @@ public class SrtFormatXml {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static Integer getCurTime(String text){
+        String appKey = "ZosndNxIufNjR25s";
+        String id = "LTAI5tAS7piKbU37QR7Px4Xw";
+        String secret = "kMexSFfbT8GCekqHk990KGRo6f7dov";
+
+        String musicOutFile = "/Users/shixiaoqi/Downloads/999.mp3";
+        int[] times = new int[]{0,0};
+        SpeechSynthesizerDemoTest speechSynthesizerDemoTest = new SpeechSynthesizerDemoTest(appKey, id, secret);
+        speechSynthesizerDemoTest.process(text,musicOutFile,times);
+        speechSynthesizerDemoTest.shutdown();
+
+        System.out.println("text and times====>"+text  +"====>" +times[0]+","+times[1]);
+
+        return times[1]-times[0];
+    }
+
+    public static SpeechSynthesizerDemoTest getSpeechSynthesizerDemoTest(String appKey, String accessKeyId, String accessKeySecret){
+        if (speechSynthesizerDemoTest != null){
+            return speechSynthesizerDemoTest;
+        }else{
+            speechSynthesizerDemoTest = new SpeechSynthesizerDemoTest(appKey, accessKeyId, accessKeySecret);
+            return speechSynthesizerDemoTest;
         }
     }
 

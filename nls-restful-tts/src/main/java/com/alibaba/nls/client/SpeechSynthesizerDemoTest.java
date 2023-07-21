@@ -6,7 +6,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nls.client.protocol.NlsClient;
 import com.alibaba.nls.client.protocol.OutputFormatEnum;
 import com.alibaba.nls.client.protocol.SampleRateEnum;
@@ -55,7 +60,7 @@ public class SpeechSynthesizerDemoTest {
             e.printStackTrace();
         }
     }
-    private static SpeechSynthesizerListener getSynthesizerListener(String musicOutFile) {
+    private static SpeechSynthesizerListener getSynthesizerListener(String musicOutFile,int[] times) {
         SpeechSynthesizerListener listener = null;
         try {
             listener = new SpeechSynthesizerListener() {
@@ -68,7 +73,8 @@ public class SpeechSynthesizerDemoTest {
                     //调用onComplete时表示所有TTS数据已接收完成，因此为整个合成数据的延迟。该延迟可能较大，不一定满足实时场景。
                     System.out.println("name: " + response.getName() +
                             ", status: " + response.getStatus()+
-                            ", output file :"+f.getAbsolutePath()
+                            ", output file :"+f.getAbsolutePath()+
+                            ", response : " + response.getObject("subtitles")
                     );
                 }
                 //语音合成的语音二进制数据
@@ -89,6 +95,21 @@ public class SpeechSynthesizerDemoTest {
                     }
                 }
                 @Override
+                public void onMetaInfo(SpeechSynthesizerResponse response) {
+                    // 调用onMetaInfo时表示返回字级别时间戳
+                    System.out.println("name: " + response.getName() + ", task_id: " + response.getTaskId());
+                    JSONArray subtitles = (JSONArray)response.getObject("subtitles");
+                    List<Map> subtitleList = subtitles.toJavaList(Map.class);
+
+                    times[0] = (int)subtitleList.get(0).get("begin_time");
+                    times[1] = (int)subtitleList.get(subtitleList.size()-1).get("end_time");
+                    System.out.println("begin_time: " + times[0] + ", end_time: " + times[1]);
+
+//                    for (Map word : subtitleList) {
+//                        System.out.println("current subtitle: " + word);
+//                    }
+                }
+                @Override
                 public void onFail(SpeechSynthesizerResponse response){
                     //task_id是调用方和服务端通信的唯一标识，当遇到问题时需要提供task_id以便排查。
                     System.out.println(
@@ -104,18 +125,18 @@ public class SpeechSynthesizerDemoTest {
         }
         return listener;
     }
-    public void process(String text,String musicOutFile) {
+    public void process(String text,String musicOutFile,int[] times) {
         SpeechSynthesizer synthesizer = null;
         try {
             //创建实例，建立连接。
-            synthesizer = new SpeechSynthesizer(client, getSynthesizerListener(musicOutFile));
+            synthesizer = new SpeechSynthesizer(client, getSynthesizerListener(musicOutFile,times));
             synthesizer.setAppKey(appKey);
             //设置返回音频的编码格式
             synthesizer.setFormat(OutputFormatEnum.MP3);
             //设置返回音频的采样率
             synthesizer.setSampleRate(SampleRateEnum.SAMPLE_RATE_16K);
             //发音人
-            synthesizer.setVoice("siyue");
+            synthesizer.setVoice("abby");
             //语调，范围是-500~500，可选，默认是0。
 //            synthesizer.setPitchRate(100);
             //语速，范围是-500~500，默认是0。
@@ -123,7 +144,7 @@ public class SpeechSynthesizerDemoTest {
             //设置用于语音合成的文本
             synthesizer.setText(text);
             // 是否开启字幕功能（返回相应文本的时间戳），默认不开启，需要注意并非所有发音人都支持该参数。
-//            synthesizer.addCustomedParam("enable_subtitle", false);
+            synthesizer.addCustomedParam("enable_subtitle", true);
             //此方法将以上参数设置序列化为JSON格式发送给服务端，并等待服务端确认。
             long start = System.currentTimeMillis();
             synthesizer.start();
@@ -159,7 +180,8 @@ public class SpeechSynthesizerDemoTest {
 //        String text = "<speak><break time=\"500ms\"/></speak><speak rate=\"352\"><s>He is a secretive spy</s></speak><speak rate=\"352\"><s></s></speak>";
         String musicOutFile = "/Users/shixiaoqi/Downloads/666.mp3";
 
-        demo.process(text,musicOutFile);
+        int[] times = new int[]{0,0};
+        demo.process(text,musicOutFile,times);
         demo.shutdown();
     }
 }

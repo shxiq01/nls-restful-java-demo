@@ -55,7 +55,7 @@ public class SpeechLongSynthesizerDemoTest {
         SpeechSynthesizerListener listener = null;
         try {
             listener = new SpeechSynthesizerListener() {
-                File f=new File("musicOutFile");
+                File f=new File(musicOutFile);
                 FileOutputStream fout = new FileOutputStream(f);
                 private boolean firstRecvBinary = true;
                 //语音合成结束
@@ -138,9 +138,9 @@ public class SpeechLongSynthesizerDemoTest {
         client.shutdown();
     }
     public static void main(String[] args) throws Exception {
-        String appKey = "";
-        String id = "";
-        String secret = "";
+        String appKey = "ZosndNxIufNjR25s";
+        String id = "LTAI5tAS7piKbU37QR7Px4Xw";
+        String secret = "kMexSFfbT8GCekqHk990KGRo6f7dov";
 
 
 //        String ttsTextLong = "百草堂与三味书屋 鲁迅 \n" +
@@ -152,8 +152,9 @@ public class SpeechLongSynthesizerDemoTest {
 
         String fileOutput = "/Users/shixiaoqi/Downloads/7月13日.xml";
         String musicOutFile = "/Users/shixiaoqi/Downloads/666.mp3";
-//        String ttsTextLong = new String(Files.readAllBytes(Paths.get(fileOutput)));
-        String ttsTextLong = "<speak>请闭上眼睛休息一下<break time=\"500ms\"/>好了，请睁开眼睛。</speak>\n<speak>请闭上眼睛休息一下<break time=\"500ms\"/>好了，请睁开眼睛。</speak>";
+        String ttsTextLong = new String(Files.readAllBytes(Paths.get(fileOutput)));
+//        String ttsTextLong = "<speak><break time=\"500ms\"/><s>请闭上眼睛休息一下</s></speak><speak><break time=\"11833ms\"/><s>好了，请睁开眼睛。</s></speak>";
+//        String ttsTextLong = "<speak rate=\"365\"><s>A furrowed brow and averted gaze reveal a fleeting disgust</s></speak><speak rate=\"691\"><break time=\"300ms\"/><s>Now let's look at an even more challenging one</s></speak><speak rate=\"405\"><break time=\"11833ms\"/><s>What emotion is this?</s></speak>";
 
         System.out.println("ttsTextLong===>"+ttsTextLong);
 
