@@ -145,9 +145,9 @@ public class SpeechSynthesizerDemoTest {
         client.shutdown();
     }
     public static void main(String[] args) throws Exception {
-        String appKey = "ZosndNxIufNjR25s";
-        String id = "LTAI5tAS7piKbU37QR7Px4Xw";
-        String secret = "kMexSFfbT8GCekqHk990KGRo6f7dov";
+        String appKey = "";
+        String id = "";
+        String secret = "";
 
         SpeechSynthesizerDemoTest demo = new SpeechSynthesizerDemoTest(appKey, id, secret);
 //        String fileInput = "/Users/shixiaoqi/Downloads/7月13日.srt";

@@ -191,10 +191,10 @@ public class SpeechSynthesizerRestfulChunkedWithLongTextDemo {
     }
 
     public static void main(String[] args) throws IOException {
-        String AccessKeyID = "LTAI5tAS7piKbU37QR7Px4Xw";
-        String AccessKeySecret = "kMexSFfbT8GCekqHk990KGRo6f7dov";
+        String AccessKeyID = "";
+        String AccessKeySecret = "";
         String token = AccessTokenUtils.getToken(AccessKeyID, AccessKeySecret);
-        String appkey = "ZosndNxIufNjR25s";
+        String appkey = "";
 
         String fileInput = "/Users/shixiaoqi/Downloads/7月13日.xml";
         String fileOutput = "/Users/shixiaoqi/Downloads/longText4TTS4Restful.mp3";
