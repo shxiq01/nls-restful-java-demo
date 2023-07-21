@@ -19,11 +19,11 @@ public class SrtFormatXml {
      * Those around him think he has no secrets
      *
      * xml 字符串示例:
-     * <speak>
-     * <break time="700ms"/><s>这是第一句话</s>
+     * <speak rate="300">
+     * <break time="700ms"/>这是第一句话
      * </speak>
-     * <speak>
-     * <break time="400ms"/><s>这是第二句话</s>
+     * <speak rate="0">
+     * 这是第二句话
      * </speak>
      */
     public static void translate(String fileInput, String fileOutput){
@@ -32,14 +32,18 @@ public class SrtFormatXml {
             String[] srtArray = srtString.split("\n");
             StringBuilder xmlStringBuilder = new StringBuilder();
 
-            Integer times = 2*60*1000 + 27*1000 + 270;
-            Integer perWordTime = times/292;
-
             Integer totalTime = 0;
             Integer lastTime = 0;
             Integer rate = 0;
+
+            Integer breakTime = 0;
             for (String srt : srtArray) {
                 String text = srt.replace("\r","");
+
+                if (text.trim().equals("")){
+                    continue;
+                }
+
                 boolean isInt = text.matches("-?\\d+");
                 if (isInt){
                     continue;
@@ -58,25 +62,32 @@ public class SrtFormatXml {
                     // 两句话之间的间隔时间
                     int sleep = startTimeMs - lastTime;
                     if (sleep > 0) {
-                        xmlStringBuilder.append("<speak>");
-                        xmlStringBuilder.append("<break time=\"" + sleep + "ms\"/>");
-                        xmlStringBuilder.append("</speak>");
+                        breakTime = sleep;
+                    }else {
+                        breakTime = 0;
                     }
                     lastTime = endTimeMs;
                     totalTime = endTimeMs - startTimeMs;
                 } else {
-                    String[] words = text.split(" ");
-                    Integer wordCount = words.length;
-                    Integer curTime = wordCount * perWordTime;
+                    Integer textLength = text.length();
+                    Integer curTime = (int) Math.round((textLength/500.0)*60*1000);
+
+                    System.out.println("textLength"+textLength+"curTime:"+curTime+" totalTime:"+totalTime);
                     if(curTime > totalTime) {
                         double rate1 = (double)curTime/totalTime;
                         double x = 1 - (double)1 / rate1;
                         double y = x/0.001;
                         rate = (int) Math.round(y);
+                        System.out.println(" rate:"+rate);
                     }
 
                     xmlStringBuilder.append("<speak rate=\""+rate+"\">");
-                    xmlStringBuilder.append("<s>" + text + "</s>");
+
+                    if(breakTime > 0) {
+                        xmlStringBuilder.append("<break time=\"" + breakTime + "ms\"/>");
+                    }
+
+                    xmlStringBuilder.append( text);
                     xmlStringBuilder.append("</speak>");
                 }
 
